@@ -35,39 +35,21 @@ const authentication = async (req, res, next) => {
 /*############################################ AUTHORISATION ##########################################################*/
 
 const authorisation = async (req, res, next) => {
-  try {
-  
-    let userId = req.body.userId;
-    let bookId = req.params.bookId;
-    let userIdFromBook;
-    
-    if (bookId) {
-      if (!ObjectId.isValid(bookId)) {
-        return res
-          .status(400)
-          .send({ status: false, message: "Please Provide Valid Book ID" });
-      }
-      let user = await bookModel.findOne({ _id: bookId, isDeleted: false });
-      if (!user) {
-        return res
-          .status(404)
-          .send({ status: false, message: "No Book found" });
-      }
-      userIdFromBook = user.userId.toString();
-    } else {
-       if(!userId || userId === 'undefined' || userId.trim().length===0){
-      return res.status(400).send({status: false, message: 'Please enter userId'})
+
+  if (req.body.userId) {
+      //Request Body
+      if(decodedToken.userId == req.body.userId) return next()
+      else return res.status(401).send({ status: false, msg: "Unauthorised!!!" });
+   }else if (req.params.bookId) {
+      //Path Parameter
+      let requiredId = await bookModel.findOne({ _id: req.params.bookId }).select({ userId: 1, _id: 0 })
+      let userIdFromBook = requiredId.userId.toString()
+      if(decodedToken.userId == userIdFromBook) return next()
+      else return res.status(401).send({ status: false, msg: "Unauthorised!!!" });
      }
-      userIdFromBook = userId;
-    }
-    if (decodedToken.userId !== userIdFromBook) {
-      return res.status(403).send({ status: false, message: "This User is Unauthorised to Create, Update and Delete a Book!!!" });
-    }
-    req.loggedIn = userIdFromBook
-    next();
-  } catch (err) {
-    return res.status(500).send({ status: false, message: err.message });
-  }
+  req.loggedIn = decodedToken.userId
+  return next()
+
 };
 
 module.exports.authentication = authentication;

@@ -19,11 +19,13 @@
   },
   "homepage": "https://github.com/pushpakov/Books-Management-Project#readme",
   "dependencies": {
+    "aws-sdk": "^2.1174.0",
     "express": "^4.18.1",
     "isbn-validate": "^1.0.3",
     "isbn-validation": "^1.0.72",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.3",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^2.0.19",
     "route": "^0.2.5"
   }

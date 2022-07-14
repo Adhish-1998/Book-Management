@@ -6,6 +6,7 @@ const reviewModel = require('../models/reviewModel')
 const ObjectId = require('mongoose').Types.ObjectId
 const isbn = require('isbn-validate')                     // to validate 10 digit isbn  
 const { checksum } = require('isbn-validation')              // to validate 13 digit isbn
+const {uploadFile} = require('../.aws/config')
 
 const isValid = function (value) {
   if (typeof value === "undefined" || value === null) return false;
@@ -18,8 +19,13 @@ let createBookDocument = async (req, res) => {
   try {
     let bookDeatils = req.body;
     let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = bookDeatils;
+    let files = req.files
     let obj = {};
+    if(files && files.length > 0) {
+      let uploadUrl = await uploadFile(files[0])
+      obj.bookCover = uploadUrl
 
+    }
     if (Object.keys(bookDeatils).length == 0) {
       return res
         .status(400)
