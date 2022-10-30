@@ -8,6 +8,7 @@ const isbn = require('isbn-validate')                     // to validate 10 digi
 const { checksum } = require('isbn-validation')              // to validate 13 digit isbn
 const {uploadFile} = require('../.aws/config')
 
+
 const isValid = function (value) {
   if (typeof value === "undefined" || value === null) return false;
   if (typeof value === "string" && value.trim().length === 0) return false;
@@ -327,11 +328,7 @@ const updateBook = async (req, res) => {
           message: 'Book not found',
         });
     }
-    // if (book.isDeleted == true) {
-    //   return res
-    //     .status(404)
-    //     .send({ status: false, message: "Document already deleted" });
-    // }
+    
     let updatedbookDetail = await bookModel.findOneAndUpdate(
       { _id: book._id },
       bookObject,
@@ -361,7 +358,7 @@ const deletedbook = async (req, res) => {
     let findid = await bookModel.findOne({ _id: bookId, isDeleted: false })
 
     if (!findid) {
-      return res.status(400).send({ status: false, message: "The Requested Book is Unavailable" })
+      return res.status(404).send({ status: false, message: "The Requested Book is Unavailable" })
     }
 
     let deletedData = await bookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: Date.now() } })

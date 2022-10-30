@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const route = require("./routes/route.js");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 const app = express();
 const multer = require('multer')
 
@@ -10,14 +10,11 @@ app.use(multer().any())
 
 
 mongoose
-.connect(
-    "mongodb+srv://pushpak:pushpak1819@radoncluster.opqe2.mongodb.net/group1Database?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-    }
-  )
-  .then(() => console.log("MongoDb is connected"))
-  .catch( err => console.log(err));
+.connect("mongodb+srv://pushpak:pushpak1819@radoncluster.opqe2.mongodb.net/group1Database?retryWrites=true&w=majority", {
+      useNewUrlParser: true
+})
+.then(() => console.log("MongoDb is connected"))
+.catch( err => console.log(err));
 
 app.use("/", route);
 
